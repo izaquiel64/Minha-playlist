@@ -4,10 +4,9 @@
       "nome": "Românticas",
       "musicas": [
         { "nome": "careless whisper" }
+        { "nome": "Love story" }
+      ]
       ]
     }
   ]
 }
-"musicas": [
-        { "nome": "Love story" }
-      ]
