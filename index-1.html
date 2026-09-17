@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Playlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14110F;
+    --surface: #1E1A16;
+    --paper: #EDE6DA;
+    --paper-dim: #B9AF9E;
+    --brass: #C9A227;
+    --brass-dim: #7A6a24;
+    --line: #35302A;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--paper);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 32px 18px 60px;
+  }
+  .wrap{ max-width: 560px; margin: 0 auto; }
+  .eyebrow{ font-size: 13px; color: var(--brass); margin: 0 0 6px; }
+  h1{ font-family: 'Fraunces', serif; font-weight: 600; font-size: 32px; margin: 0; }
+  .subtitle{ color: var(--paper-dim); font-size: 14.5px; margin-top: 8px; line-height: 1.5; }
+
+  .genero{ margin-top: 30px; }
+  .genero-nome{
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    color: var(--brass);
+    margin-bottom: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .track{
+    display:flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .track:last-child{ border-bottom: none; }
+  .num{
+    font-family: 'Fraunces', serif;
+    color: var(--brass-dim);
+    font-size: 17px;
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .name{ flex: 1; font-size: 16px; word-break: break-word; }
+  a.name{ color: var(--paper); text-decoration: none; }
+  a.name:hover{ color: var(--brass); text-decoration: underline; }
+
+  .empty{
+    color: var(--paper-dim);
+    font-size: 14.5px;
+    text-align: center;
+    padding: 40px 10px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">playlist</p>
+  <h1 id="titulo">Minha lista de músicas</h1>
+  <p class="subtitle">Organizada por gênero. Só para ouvir e conferir — atualizada por mim.</p>
+
+  <div id="conteudo"></div>
+  <div class="empty" id="vazio" style="display:none;">A playlist ainda está vazia.</div>
+</div>
+
+<script>
+  fetch('musicas.json?_=' + Date.now())
+    .then(function(res){ return res.json(); })
+    .then(function(data){ render(data.generos || []); })
+    .catch(function(){
+      document.getElementById('conteudo').innerHTML =
+        '<div class="empty">Não consegui carregar a playlist agora. Tenta recarregar a página.</div>';
+    });
+
+  function render(generos){
+    const conteudo = document.getElementById('conteudo');
+    const vazio = document.getElementById('vazio');
+    if(!generos.length){
+      vazio.style.display = 'block';
+      return;
+    }
+    generos.forEach(function(g){
+      const section = document.createElement('div');
+      section.className = 'genero';
+
+      const nome = document.createElement('div');
+      nome.className = 'genero-nome';
+      nome.textContent = g.nome;
+      section.appendChild(nome);
+
+      (g.musicas || []).forEach(function(m, i){
+        const row = document.createElement('div');
+        row.className = 'track';
+
+        const num = document.createElement('div');
+        num.className = 'num';
+        num.textContent = String(i+1).padStart(2,'0');
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'name';
+        nameEl.textContent = m.nome;
+
+        row.appendChild(num);
+        row.appendChild(nameEl);
+        section.appendChild(row);
+      });
+
+      conteudo.appendChild(section);
+    });
+  }
+</script>
+</body>
+</html>
